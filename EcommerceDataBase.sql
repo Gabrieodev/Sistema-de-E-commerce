@@ -18,6 +18,21 @@ INSERT INTO categoria (id_categoria, nome_categoria) VALUES
   (4, 'Beleza'),
   (5, 'Esportes'),
   (6, 'Móveis');
+  
+  -- Table structure for table `perfil_cliente`
+
+CREATE TABLE perfil_cliente (
+  id_perfil INT NOT NULL AUTO_INCREMENT,
+  nome_perfil VARCHAR(50) NOT NULL,
+  gasto_minimo DECIMAL(10,2) NOT NULL,
+  gasto_maximo DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (id_perfil)
+);
+
+INSERT INTO perfil_cliente (id_perfil, nome_perfil, gasto_minimo, gasto_maximo) VALUES
+  (1, 'Conservador', 0.00, 199.99),
+  (2, 'Moderado', 200.00, 1000.00),
+  (3, 'Arrojado', 1000.01, 9999999.99);
 
 -- Table structure for table `cliente`
 
@@ -83,7 +98,67 @@ INSERT INTO evento_especial (id_evento, nome_evento, data_evento, desconto_perce
   (3, 'Black Friday', '2025-11-28', 30.00, 'DATA_FIXA'),
   (4, 'Dia do Consumidor', '2025-03-15', 10.00, 'DATA_FIXA'),
   (5, 'Aniversário do Cliente', NULL, 40.00, 'ANIVERSARIO');
+  
+  -- Table structure for table `pedido`
 
+CREATE TABLE pedido (
+  id_pedido INT NOT NULL AUTO_INCREMENT,
+  id_cliente INT NOT NULL,
+  data_pedido DATE NOT NULL,
+  valor_total DECIMAL(10,2) DEFAULT NULL,
+  id_evento INT DEFAULT NULL,
+  PRIMARY KEY (id_pedido),
+  KEY (id_cliente),
+  KEY (id_evento),
+  CONSTRAINT pedido_ibfk_1 FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+  CONSTRAINT pedido_ibfk_2 FOREIGN KEY (id_evento) REFERENCES evento_especial(id_evento)
+);
+
+INSERT INTO pedido (id_pedido, id_cliente, data_pedido, valor_total, id_evento) VALUES
+  (1, 1, '2025-12-25', 159.92, 1),
+  (2, 1, '2025-07-10', 89.90, NULL),
+  (3, 1, '2025-05-11', 72.42, 2),
+  (4, 2, '2025-11-28', 209.97, 3),
+  (5, 2, '2025-03-15', 107.91, 4),
+  (6, 3, '2025-12-25', 239.85, 1),
+  (7, 4, '2025-07-08', 899.90, NULL),
+  (8, 4, '2025-07-08', 499.90, NULL),
+  (9, 4, '2025-09-30', 139.90, 5),
+  (10, 4, '2025-11-28', 119.88, 3),
+  (11, 5, '2025-11-10', 89.85, 5),
+  (12, 5, '2025-03-15', 44.91, 4),
+  (13, 6, '2025-10-01', 79.90, NULL),
+  (14, 1, '2025-06-15', 150.00, NULL),
+  (15, 5, '2025-05-20', 150.00, NULL);
+
+-- Table structure for table `produto`
+
+CREATE TABLE produto (
+  id_produto INT NOT NULL AUTO_INCREMENT,
+  nome_produto VARCHAR(100) NOT NULL,
+  descricao TEXT,
+  preco DECIMAL(10,2) NOT NULL,
+  estoque INT DEFAULT 0,
+  id_categoria INT DEFAULT NULL,
+  PRIMARY KEY (id_produto),
+  KEY id_categoria (id_categoria),
+  CONSTRAINT produto_ibfk_1 FOREIGN KEY (id_categoria) REFERENCES categoria (id_categoria)
+);
+
+INSERT INTO produto (id_produto, nome_produto, descricao, preco, estoque, id_categoria) VALUES
+  (1, 'Fone Bluetooth', 'Fone sem fio com cancelamento de ruído', 199.90, 50, 1),
+  (2, 'Carregador Turbo', 'Carregador rápido USB-C 30W', 89.90, 80, 1),
+  (3, 'Camiseta Básica', 'Camiseta de algodão unissex', 39.90, 100, 2),
+  (4, 'Jaqueta Jeans', 'Jaqueta casual estilo urbano', 159.90, 30, 2),
+  (5, 'O Hobbit', 'Livro de fantasia de J.R.R. Tolkien', 49.90, 70, 3),
+  (6, 'Clean Code', 'Guia de boas práticas em programação', 99.90, 40, 3),
+  (7, 'Perfume Floral', 'Fragrância feminina com notas doces', 129.90, 25, 4),
+  (8, 'Creme Facial', 'Hidratante com proteção solar FPS 30', 59.90, 60, 4),
+  (9, 'Bola de Futebol', 'Bola oficial tamanho 5', 79.90, 45, 5),
+  (10, 'Luvas de Academia', 'Luvas para treino com proteção', 39.90, 70, 5),
+  (11, 'Cadeira Gamer', 'Cadeira ergonômica com ajuste de altura', 899.90, 15, 6),
+  (12, 'Mesa de Escritório', 'Mesa com tampo de madeira e estrutura metálica', 499.90, 10, 6);
+  
 -- Table structure for table `item_pedido`
 
 CREATE TABLE item_pedido (
@@ -150,81 +225,6 @@ INSERT INTO pagamento (id_pagamento, id_pedido, forma_pagamento, status_pagament
   (11, 11, 'Débito', 'Aprovado', '2025-11-10 15:22:00', 89.85),
   (12, 12, 'Boleto', 'Aprovado', '2025-03-15 17:05:00', 44.91),
   (13, 13, 'PIX', 'Aprovado', '2025-10-01 08:59:00', 79.90);
-
--- Table structure for table `pedido`
-
-CREATE TABLE pedido (
-  id_pedido INT NOT NULL AUTO_INCREMENT,
-  id_cliente INT NOT NULL,
-  data_pedido DATE NOT NULL,
-  valor_total DECIMAL(10,2) DEFAULT NULL,
-  id_evento INT DEFAULT NULL,
-  PRIMARY KEY (id_pedido),
-  KEY (id_cliente),
-  KEY (id_evento),
-  CONSTRAINT pedido_ibfk_1 FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
-  CONSTRAINT pedido_ibfk_2 FOREIGN KEY (id_evento) REFERENCES evento_especial(id_evento)
-);
-
-INSERT INTO pedido (id_pedido, id_cliente, data_pedido, valor_total, id_evento) VALUES
-  (1, 1, '2025-12-25', 159.92, 1),
-  (2, 1, '2025-07-10', 89.90, NULL),
-  (3, 1, '2025-05-11', 72.42, 2),
-  (4, 2, '2025-11-28', 209.97, 3),
-  (5, 2, '2025-03-15', 107.91, 4),
-  (6, 3, '2025-12-25', 239.85, 1),
-  (7, 4, '2025-07-08', 899.90, NULL),
-  (8, 4, '2025-07-08', 499.90, NULL),
-  (9, 4, '2025-09-30', 139.90, 5),
-  (10, 4, '2025-11-28', 119.88, 3),
-  (11, 5, '2025-11-10', 89.85, 5),
-  (12, 5, '2025-03-15', 44.91, 4),
-  (13, 6, '2025-10-01', 79.90, NULL),
-  (14, 1, '2025-06-15', 150.00, NULL),
-  (15, 5, '2025-05-20', 150.00, NULL);
-
--- Table structure for table `perfil_cliente`
-
-CREATE TABLE perfil_cliente (
-  id_perfil INT NOT NULL AUTO_INCREMENT,
-  nome_perfil VARCHAR(50) NOT NULL,
-  gasto_minimo DECIMAL(10,2) NOT NULL,
-  gasto_maximo DECIMAL(10,2) NOT NULL,
-  PRIMARY KEY (id_perfil)
-);
-
-INSERT INTO perfil_cliente (id_perfil, nome_perfil, gasto_minimo, gasto_maximo) VALUES
-  (1, 'Conservador', 0.00, 199.99),
-  (2, 'Moderado', 200.00, 1000.00),
-  (3, 'Arrojado', 1000.01, 9999999.99);
-
--- Table structure for table `produto`
-
-CREATE TABLE produto (
-  id_produto INT NOT NULL AUTO_INCREMENT,
-  nome_produto VARCHAR(100) NOT NULL,
-  descricao TEXT,
-  preco DECIMAL(10,2) NOT NULL,
-  estoque INT DEFAULT 0,
-  id_categoria INT DEFAULT NULL,
-  PRIMARY KEY (id_produto),
-  KEY id_categoria (id_categoria),
-  CONSTRAINT produto_ibfk_1 FOREIGN KEY (id_categoria) REFERENCES categoria (id_categoria)
-);
-
-INSERT INTO produto (id_produto, nome_produto, descricao, preco, estoque, id_categoria) VALUES
-  (1, 'Fone Bluetooth', 'Fone sem fio com cancelamento de ruído', 199.90, 50, 1),
-  (2, 'Carregador Turbo', 'Carregador rápido USB-C 30W', 89.90, 80, 1),
-  (3, 'Camiseta Básica', 'Camiseta de algodão unissex', 39.90, 100, 2),
-  (4, 'Jaqueta Jeans', 'Jaqueta casual estilo urbano', 159.90, 30, 2),
-  (5, 'O Hobbit', 'Livro de fantasia de J.R.R. Tolkien', 49.90, 70, 3),
-  (6, 'Clean Code', 'Guia de boas práticas em programação', 99.90, 40, 3),
-  (7, 'Perfume Floral', 'Fragrância feminina com notas doces', 129.90, 25, 4),
-  (8, 'Creme Facial', 'Hidratante com proteção solar FPS 30', 59.90, 60, 4),
-  (9, 'Bola de Futebol', 'Bola oficial tamanho 5', 79.90, 45, 5),
-  (10, 'Luvas de Academia', 'Luvas para treino com proteção', 39.90, 70, 5),
-  (11, 'Cadeira Gamer', 'Cadeira ergonômica com ajuste de altura', 899.90, 15, 6),
-  (12, 'Mesa de Escritório', 'Mesa com tampo de madeira e estrutura metálica', 499.90, 10, 6);
 
 -- Procedure to update customer profiles based on their total spending on orders
 
